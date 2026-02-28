@@ -225,7 +225,10 @@ function openFullscreen(url, title, date, location, description, index, category
     
     img.src = photo.url;
     img.dataset.index = index;
-    titleEl.textContent = photo.title || '';
+    // 全屏查看时显示分类名称，不显示照片编号
+    const category = categories.find(c => c.id === photo.categoryId);
+    const categoryName = category ? category.name : '';
+    titleEl.textContent = categoryName;
     
     // 构建描述信息
     let infoParts = [];
@@ -371,8 +374,10 @@ function savePhotoInfo() {
             const titleEl = document.getElementById('fullscreenTitle');
             const descEl = document.getElementById('fullscreenDesc');
             
-            // 更新标题
-            titleEl.textContent = updatedPhoto.title || '';
+            // 更新标题（显示分类名称）
+            const category = categories.find(c => c.id === updatedPhoto.categoryId);
+            const categoryName = category ? category.name : '';
+            titleEl.textContent = categoryName;
             
             // 重新构建描述信息
             let infoParts = [];
