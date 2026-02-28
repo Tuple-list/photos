@@ -1,2 +1,2 @@
 # photos
-life photos
+gansu life photos
