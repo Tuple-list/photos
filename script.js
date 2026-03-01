@@ -27,12 +27,13 @@ async function loadPhotos() {
         photosLoaded = true;
         console.log(`Loaded ${photos.length} photos from photos.json`);
         
+        // 默认使用 photos.json 中的数据
+        // 如果需要从 localStorage 恢复，取消下面一行的注释
+        // loadPhotosFromStorage();
+        
         // 加载完成后渲染页面
         renderCategories();
         updateStats();
-        
-        // 如果有保存的照片数据，从 localStorage 恢复编辑信息
-        loadPhotosFromStorage();
     } catch (error) {
         console.error('Error loading photos:', error);
         photos = [];
@@ -345,9 +346,12 @@ function savePhotoInfo() {
     // 更新照片数据
     const photoIndex = photos.findIndex(p => p._id === photoId);
     if (photoIndex !== -1) {
+        console.log('Saving photo:', photoId, 'description:', description);
         photos[photoIndex].date = dateValue || '';
         photos[photoIndex].location = location || '未知';
-        photos[photoIndex].description = description;
+        photos[photoIndex].description = description; // 允许空字符串
+        
+        console.log('Updated photo:', photos[photoIndex]);
         
         // 保存到本地存储
         savePhotosToStorage();
@@ -398,28 +402,47 @@ function savePhotoInfo() {
 
 // 保存照片到本地存储
 function savePhotosToStorage() {
-    localStorage.setItem('albumPhotos', JSON.stringify(photos));
+    try {
+        localStorage.setItem('albumPhotos', JSON.stringify(photos));
+        console.log('Saved to localStorage:', photos.length, 'photos');
+    } catch (e) {
+        console.error('Failed to save to localStorage:', e);
+    }
 }
 
 // 从本地存储加载照片（合并编辑信息）
 function loadPhotosFromStorage() {
-    const stored = localStorage.getItem('albumPhotos');
-    if (stored) {
+    try {
+        const stored = localStorage.getItem('albumPhotos');
+        if (!stored) {
+            console.log('No stored photos found in localStorage');
+            return;
+        }
+        
         const storedPhotos = JSON.parse(stored);
+        console.log('Loading from localStorage:', storedPhotos.length, 'photos');
+        
+        if (!photos || photos.length === 0) {
+            console.warn('photos array is empty, cannot merge');
+            return;
+        }
+        
         // 合并：保留 photos.json 的 URL，恢复 localStorage 的编辑信息
         photos = photos.map(photo => {
             const storedPhoto = storedPhotos.find(p => p._id === photo._id);
             if (storedPhoto) {
+                console.log('Merging photo:', photo._id, 'stored desc:', storedPhoto.description, 'current desc:', photo.description);
                 return {
                     ...photo,
-                    title: storedPhoto.title || photo.title,
-                    date: storedPhoto.date || photo.date,
-                    location: storedPhoto.location || photo.location,
-                    description: storedPhoto.description || photo.description
+                    title: storedPhoto.title !== undefined ? storedPhoto.title : photo.title,
+                    date: storedPhoto.date !== undefined ? storedPhoto.date : photo.date,
+                    location: storedPhoto.location !== undefined ? storedPhoto.location : photo.location,
+                    description: storedPhoto.description !== undefined ? storedPhoto.description : photo.description
                 };
             }
             return photo;
         });
+        
         // 重新渲染
         if (document.getElementById('categoryGrid')) {
             renderCategories();
@@ -429,6 +452,8 @@ function loadPhotosFromStorage() {
         if (document.getElementById('timelineContent') && typeof initTimeline === 'function') {
             initTimeline();
         }
+    } catch (e) {
+        console.error('Failed to load from localStorage:', e);
     }
 }
 
@@ -482,6 +507,54 @@ function updateStats() {
         }
     });
     totalLocationsEl.textContent = locations.size;
+}
+
+// 导出编辑后的照片数据为 JSON 文件
+function exportPhotosToJSON() {
+    if (!photos || photos.length === 0) {
+        showToast('❌ 没有可导出的照片数据');
+        return;
+    }
+    
+    // 构建导出的数据结构
+    const exportData = {
+        photos: photos.map(photo => ({
+            _id: photo._id,
+            categoryId: photo.categoryId,
+            title: photo.title,
+            date: photo.date || '',
+            location: photo.location || '未知',
+            description: photo.description || '',
+            url: photo.url
+        }))
+    };
+    
+    // 转换为 JSON 字符串（格式化）
+    const jsonStr = JSON.stringify(exportData, null, 2);
+    
+    // 创建 Blob 对象
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    
+    // 创建下载链接
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // 生成文件名（包含日期时间）
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 19).replace(/:/g, '-');
+    link.download = `photos_export_${dateStr}.json`;
+    
+    // 触发下载
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // 释放 URL 对象
+    URL.revokeObjectURL(url);
+    
+    showToast('✅ 照片数据已导出');
+    console.log('Exported photos:', photos.length);
 }
 
 // 页面加载时初始化
@@ -726,3 +799,5 @@ function initStarryBackground() {
     
     animate();
 }
+
+

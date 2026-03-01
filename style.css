@@ -366,6 +366,20 @@ body {
     border-color: rgba(255, 255, 255, 0.6);
 }
 
+/* 导出按钮样式 */
+.stat-card.export-btn {
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(144, 238, 144, 0.4) 0%, rgba(200, 255, 200, 0.4) 50%, rgba(144, 238, 144, 0.4) 100%);
+}
+
+.stat-card.export-btn:hover {
+    background: linear-gradient(135deg, rgba(144, 238, 144, 0.6) 0%, rgba(220, 255, 220, 0.6) 50%, rgba(144, 238, 144, 0.6) 100%);
+    box-shadow: 
+        0 15px 40px rgba(144, 238, 144, 0.5),
+        0 0 50px rgba(200, 255, 200, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
 .stat-number {
     font-size: 36px;
     font-weight: 800;
@@ -687,12 +701,11 @@ body {
     width: 100px;
 }
 
-/* 照片网格 - 3D立体布局 */
+/* 照片网格 */
 .photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-    perspective: 1000px;
 }
 
 .photo-item {
@@ -701,15 +714,14 @@ body {
     border-radius: 16px;
     cursor: pointer;
     background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
-    transform-style: preserve-3d;
     box-shadow: 
         0 4px 6px rgba(0, 0, 0, 0.05),
         0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* 照片项立体边框 */
+/* 照片项边框 */
 .photo-item::before {
     content: '';
     position: absolute;
@@ -718,27 +730,16 @@ body {
     right: 0;
     bottom: 0;
     border-radius: 16px;
-    padding: 2px;
-    background: linear-gradient(135deg, 
-        rgba(181, 234, 215, 0.5), 
-        rgba(199, 206, 234, 0.3));
-    -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-    mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+    border: 1px solid rgba(0, 0, 0, 0.05);
     pointer-events: none;
     z-index: 1;
 }
 
 .photo-item:hover {
-    transform: scale(1.08) rotateX(5deg) rotateY(-5deg) translateZ(20px);
+    transform: scale(1.03);
     box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.15),
-        0 30px 60px rgba(0, 0, 0, 0.1);
+        0 15px 30px rgba(0, 0, 0, 0.12),
+        0 20px 40px rgba(0, 0, 0, 0.08);
     z-index: 10;
 }
 
@@ -1376,6 +1377,196 @@ body {
 .music-icon {
     font-size: 18px;
 }
+
+/* ==================== 留言板样式 ==================== */
+
+.message-section {
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.message-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 248, 255, 0.9) 100%);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.08),
+        0 20px 60px rgba(0, 0, 0, 0.05);
+}
+
+.message-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.message-subtitle {
+    text-align: center;
+    color: #7F8C8D;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.message-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.message-input,
+.message-textarea {
+    padding: 12px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.message-input:focus,
+.message-textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.message-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.message-submit {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-end;
+}
+
+.message-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.message-empty {
+    text-align: center;
+    padding: 40px;
+    color: #95A5A6;
+    font-size: 14px;
+}
+
+.message-item {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.message-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.message-name {
+    font-weight: 600;
+    color: #2C3E50;
+    font-size: 14px;
+}
+
+.message-time {
+    color: #95A5A6;
+    font-size: 12px;
+}
+
+.message-delete {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #E74C3C;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.message-delete:hover {
+    opacity: 1;
+}
+
+.message-content {
+    color: #34495E;
+    font-size: 14px;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+/* 暗黑模式适配 */
+[data-theme="dark"] .message-container {
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.9) 0%, rgba(40, 40, 50, 0.9) 100%);
+}
+
+[data-theme="dark"] .message-input,
+[data-theme="dark"] .message-textarea {
+    background: rgba(50, 50, 60, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #E0E0E0;
+}
+
+[data-theme="dark"] .message-input:focus,
+[data-theme="dark"] .message-textarea:focus {
+    border-color: #667eea;
+}
+
+[data-theme="dark"] .message-item {
+    background: rgba(50, 50, 60, 0.6);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .message-item:hover {
+    background: rgba(50, 50, 60, 0.8);
+}
+
+[data-theme="dark"] .message-name {
+    color: #E0E0E0;
+}
+
+[data-theme="dark"] .message-content {
+    color: #B0B0B0;
+}
+
+
 
 .music-text {
     font-size: 14px;

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>生活相册</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <!-- 几何立体背景 -->
@@ -77,6 +77,10 @@
                     <span class="stat-number" id="totalLocations">0</span>
                     <span class="stat-label">地点标记</span>
                 </div>
+                <div class="stat-card export-btn" onclick="exportPhotosToJSON()" title="导出编辑后的照片数据">
+                    <span class="stat-number">📥</span>
+                    <span class="stat-label">导出数据</span>
+                </div>
             </div>
             </div>
         </header>
@@ -144,9 +148,11 @@
                 </div>
             </div>
         </footer>
+
+
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
     <script>
         // 初始化相册页面
         document.addEventListener('DOMContentLoaded', () => {
